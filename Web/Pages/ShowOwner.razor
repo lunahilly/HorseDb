@@ -29,14 +29,7 @@
 				</li>
 				<li>
 					<h2>Birthdate</h2>
-					@if (Owner.BirthDate != null)
-					{
 						<p>@(Owner.BirthDate.ToString() ?? string.Empty)</p>
-					}
-					else
-					{
-						<p>-</p>
-					}
 				</li>
 				<li>
 					<h2>Sex</h2>
@@ -52,14 +45,7 @@
 				</li>
 				<li>
 					<h2>Phone</h2>
-					@if (Owner.Phone != null)
-					{
-						<p>@(Owner.Phone)</p>
-					}
-					else
-					{
-						<p>-</p>
-					}
+						<p>@(Owner.Phone ?? string.Empty)</p>
 				</li>
 			</ul>
 

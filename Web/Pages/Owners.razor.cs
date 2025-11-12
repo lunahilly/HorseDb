@@ -13,7 +13,6 @@ namespace Horse.Web.Pages
 		//kleine letter naam omdat hij private is
 
 		[SupplyParameterFromForm(FormName = Owners.formName)]
-		//form name zodat we weten dat deze model wordt ingevuld met dit form, belangrijk als je meerdere formulieren in page hebt
 		private CreateOwner CreateModel { get; set; } = new();
 
 		[Inject] public required NavigationManager NavigationManager { get; init; }
@@ -24,7 +23,6 @@ namespace Horse.Web.Pages
 		[Inject] public required IJSRuntime JsRuntime { get; init; }
 
 		private List<Owner> data = [];
-		//get & set weg, onnodig en scheelt performance
 
 		private bool hidden = true;
 		private int delete;
@@ -44,14 +42,10 @@ namespace Horse.Web.Pages
 		private async Task AddOwner()
 		{
 			Debug.Assert(this.CreateModel.IsValid, "Validation did not run");
-			//In development krijg je een melding als er iets niet klopt, dit is in production gone. 2de parameter is de foutmelding
-
 			var db = await this.DbFactory.CreateDbContextAsync();
-			//consistency niet deze context noemen en de ander db
-
 			await using (db)
 			{
-				var entry = db.Owners.Add(new Owner()
+				db.Owners.Add(new Owner()
 				{
 					GivenName = this.CreateModel.GivenName,
 					FamilyName = this.CreateModel.FamilyName,
@@ -59,13 +53,10 @@ namespace Horse.Web.Pages
 					BirthDate = this.CreateModel.BirthDate,
 					Email = this.CreateModel.Email,
 					Phone = string.IsNullOrWhiteSpace(this.CreateModel.Phone) ? null : this.CreateModel.Phone,
-					//checked of het null of whitespace is anders geeft hij gewoon de value van create model mee
 				});
 				await db.SaveChangesAsync();
 				this.NavigationManager.Refresh(true);
 			}
-
-			//if statement weg doordat er al gevalidate wordt in de form voordat hij verstuurd wordt
 		}
 
 		private async Task ShowDialog(string name, int del, string id)
@@ -101,7 +92,7 @@ namespace Horse.Web.Pages
 			}
 		}
 
-		private bool BirthdayToday(Owner owner)
+		private static bool BirthdayToday(Owner owner)
 		{
 			if (owner.BirthDate != null && owner.BirthDate.Value.DayOfYear == DateTime.Today.DayOfYear)
 			{
