@@ -62,7 +62,7 @@ namespace Horse.Web.Pages
 					//checked of het null of whitespace is anders geeft hij gewoon de value van create model mee
 				});
 				await db.SaveChangesAsync();
-				this.data.Add(entry.Entity);
+				this.NavigationManager.Refresh(true);
 			}
 
 			//if statement weg doordat er al gevalidate wordt in de form voordat hij verstuurd wordt

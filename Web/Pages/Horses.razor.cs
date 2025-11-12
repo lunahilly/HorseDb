@@ -83,7 +83,7 @@ namespace Horse.Web.Pages
 					Color = string.IsNullOrWhiteSpace(this.CreateModel.Color) ? null : this.CreateModel.Color,
 				});
 				await db.SaveChangesAsync();
-				this.NavigationManager.Refresh();
+				this.NavigationManager.Refresh(true);
 			}
 		}
 
