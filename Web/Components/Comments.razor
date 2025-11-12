@@ -1,0 +1,30 @@
+<div class="HorseComments">
+	<div>
+		@if (horsie != null)
+		{
+			foreach (var comment in horsie)
+			{
+				<p>[@(comment.Date.ToString())] @(comment.Text) </p>
+			}
+		}
+	</div>
+	<EditForm style="display: flex; gap: 0.5em; justify-content: flex-end" Model="@(CreateModel)"
+			  OnValidSubmit="@(AddComment)" FormName="@(Comments.formName)">
+		<DataAnnotationsValidator/>
+		<ValidationSummary/>
+
+		<InputText style="border: 1px solid #c6c6c6" @bind-Value="@(CreateModel.Text)"/>
+		<ValidationMessage For="@(() => CreateModel.Text)"/>
+
+		<button type="submit">
+			<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+				 stroke="currentColor"
+				 stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+				 class="icon icon-tabler icons-tabler-outline icon-tabler-send">
+				<path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+				<path d="M10 14l11 -11"/>
+				<path d="M21 3l-6.5 18a.55 .55 0 0 1 -1 0l-3.5 -7l-7 -3.5a.55 .55 0 0 1 0 -1l18 -6.5"/>
+			</svg>
+		</button>
+	</EditForm>
+</div>

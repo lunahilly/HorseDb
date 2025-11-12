@@ -1,0 +1,159 @@
+@page "/owners"
+@using Horse.Models.Enums
+@using Horse.Web.Icons
+@layout MainLayout
+@rendermode InteractiveServer
+
+
+<PageTitle>Owners</PageTitle>
+
+<h1 style="font-size: 1.25em; font-weight: normal">All owners :</h1>
+<table class="table">
+	<thead>
+	<tr>
+		<th>Id</th>
+		<th>Name</th>
+		<th>Sex</th>
+		<th>Email</th>
+		<th>Phone</th>
+		<th>Horses</th>
+		<th>
+			<button style="border: none; background: none; " type="button" id="tst" @onclick="@(ToggleHidden)">
+				<Add/>
+			</button>
+		</th>
+	</tr>
+	</thead>
+	<tbody>
+	@foreach (var owner in data)
+	{
+		var key = $"dialogkey-{owner.GivenName}-{owner.FamilyName}-{owner.Id}";
+		<tr @key="key">
+			<td>
+				<a href="/owners/@(owner.Id.ToString())">
+					@(owner.Id.ToString())
+				</a>
+			</td>
+			<td>
+				<a href="/owners/@(owner.Id.ToString())">
+					@(owner.GivenName) @(owner.FamilyName)
+				</a>
+			</td>
+			<td>
+				@(owner.Sex.ToSexHuman())
+			</td>
+			<td>
+				@(owner.Email)
+			</td>
+			<td>
+				@if (owner.Phone != null)
+				{
+					@(owner.Phone)
+				}
+				else
+				{
+					<p>-</p>
+				}
+			</td>
+			<td>
+				<ul>
+					@if (owner.Horses != null)
+						@foreach (var horse in owner.Horses)
+					{
+						var key2 = $"horse-in-owner-key-{horse.Name}";
+						<li @key="key2">
+							<a href="/horses/@(horse.Id.ToString())">
+								@(horse.Name)
+							</a>
+						</li>
+					}
+				</ul>
+			</td>
+			<td>
+				<button style="border: none; background: none;" type="button" @onclick="@(() => ShowDialog(owner.GivenName , owner.Id, "DialogOwner"))">
+					<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+					     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+					     class="icon icon-tabler icons-tabler-outline icon-tabler-trash">
+						<path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+						<path d="M4 7l16 0"/>
+						<path d="M10 11l0 6"/>
+						<path d="M14 11l0 6"/>
+						<path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"/>
+						<path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"/>
+					</svg>
+				</button>
+			</td>
+		</tr>
+	}
+	<dialog id="DialogOwner">
+		<h2 id="DialogText" style="font-size: 1.5em; margin-block-end: 2em"></h2>
+		<div style="display: flex; gap: 2em; justify-content: space-evenly">
+			<button style="font-size: 1.25em" type="button" @onclick="@(() => DeleteOwner(delete))">Yes</button>
+			<button style="font-size: 1.25em" type="button" @onclick="@(() => CloseDialog("DialogOwner"))">No</button>
+		</div>
+	</dialog>
+	<dialog id="ErrorDialog">
+		<h2 id="ErrorText"></h2>
+		<div style="display: flex; gap: 2em; justify-content: space-evenly">
+			<button style="font-size: 1.25em" type="button" @onclick="@(() => CloseDialog("ErrorDialog"))">OK</button>
+		</div>
+	</dialog>
+	</tbody>
+</table>
+<div class="Form" hidden="@(hidden)">
+	<EditForm Model="@(CreateModel)" OnValidSubmit="@(AddOwner)"
+	          FormName="@(Owners.formName)">
+		@* enhance weg, model tussen haakjes en onsubmit alleen tussen haakjes *@
+		<DataAnnotationsValidator/>
+		@* validate of alles correct is (aka of de dingen die je hebt meegegeven in model kloppen *@
+		<ValidationSummary/>
+		@* hierin staan alle foutmeldingen, hij poept alle relevante fout meldingen uit boven aan de form wanneer van toepassing *@
+		<h2>New Owner</h2>
+		<div>
+			<label for="given-name">Given name : </label>
+			<InputText id="given-name" required @bind-Value="@(CreateModel.GivenName)"/>
+		</div>
+		<ValidationMessage For="@(() => CreateModel.GivenName)"/>
+		@* foutmelding onder input als er iets niet correct is met deze  *@
+
+		<div>
+			<label for="family-name">Family name : </label>
+			<InputText id="family-name" required @bind-Value="@(CreateModel.FamilyName)"/>
+		</div>
+		<ValidationMessage For="@(() => CreateModel.FamilyName)"/>
+
+		<div>
+			<label for="birth-date">Date of birth : </label>
+			<InputDate id="birth-date" @bind-Value="@(CreateModel.BirthDate)"/>
+		</div>
+		<ValidationMessage For="@(() => CreateModel.BirthDate)"/>
+
+		<div>
+			<label for="sex">Sex : </label>
+			<InputSelect id="sex" required @bind-Value="@(CreateModel.Sex)">
+				<option disabled></option>
+				@foreach (var value in Enum.GetValues<HumanSex>().Where(static (value) => value > HumanSex.None))
+				{
+					var key = $"sex-{value}";
+					<option @key="@(key)" value="@(value.ToSexHuman())">@(value.ToSexHuman())</option>
+				}
+				@* key toevoegen vanwege foreach loop. zorgt ervoor dat als er iets mis gaat dat de page weet waar hij zelf verder moet gaan en in een lijst van 100 dingen misschien maar 2 opnieuw te renderen ipv alle 100. verbeterd peformance	 *@
+			</InputSelect>
+		</div>
+		<ValidationMessage For="@(() => CreateModel.Sex)"/>
+
+		<div>
+			<label for="email">Email : </label>
+			<InputText type="email" id="email" required @bind-Value="@(CreateModel.Email)"/>
+		</div>
+		<ValidationMessage For="@(() => CreateModel.Email)"/>
+
+		<div>
+			<label for="phone">Phone : </label>
+			<InputText id="phone" @bind-Value="@(CreateModel.Phone)"/>
+		</div>
+		<ValidationMessage For="@(() => CreateModel.Phone)"/>
+
+		<button type="submit">Add</button>
+	</EditForm>
+</div>

@@ -1,0 +1,136 @@
+@page "/owners/{Id:int}"
+@using Horse.Models.Enums
+@using Horse.Web.Icons
+@layout MainLayout
+@rendermode InteractiveServer
+
+@if (Owner is not null)
+{
+	<!--suppress ALL -->
+	<div class="ShowTitle">
+		<h1 style="margin-block-end: 0.5em">@(Owner.GivenName)</h1>
+		<button style="border: none; background: none; margin-block-end: 0.5em" @onclick="@(ToggleHidden)"
+		        type="button">
+			<Edit/>
+		</button>
+	</div>
+	<div class="Top">
+		<div>
+			<ul class="List">
+				<li>
+					<h2>Name</h2>
+					<p>@(Owner.GivenName) @(Owner.FamilyName)</p>
+				</li>
+				<li>
+					<h2>Birthdate</h2>
+					@if (Owner.BirthDate != null)
+					{
+						<p>@(Owner.BirthDate.ToString() ?? string.Empty)</p>
+					}
+					else
+					{
+						<p>-</p>
+					}
+				</li>
+				<li>
+					<h2>Sex</h2>
+					<p>@(Owner.Sex.ToSexHuman())</p>
+				</li>
+				<li>
+					<h2>Email</h2>
+					<p>
+						<a href="mailto: @(Owner.Email)">
+							@(Owner.Email)
+						</a>
+					</p>
+				</li>
+				<li>
+					<h2>Phone</h2>
+					@if (Owner.Phone != null)
+					{
+						<p>@(Owner.Phone)</p>
+					}
+					else
+					{
+						<p>-</p>
+					}
+				</li>
+			</ul>
+
+			<h2 class="Horses">Horses</h2>
+			<ul class="List">
+				<li>
+					<h2 style="font-weight: bold">Name</h2>
+					<p style="font-weight: bold">Chip number</p>
+				</li>
+				@if (Owner.Horses != null)
+				{
+					foreach (var horse in Owner.Horses)
+					{
+						var key = $"fullnamekey-withchip-{horse.FullName}";
+						<li @key="key">
+							<h2>@(horse.FullName)</h2>
+							<a href="/horses/@(horse.Id.ToString())">
+								<p>@(horse.Chip)</p>
+							</a>
+						</li>
+					}
+				}
+			</ul>
+		</div>
+		<div hidden="@(hidden.ToString())" class="Form">
+			<EditForm Model="@(UpdateModel)" OnValidSubmit="@(UpdateOwner)" FormName="@(ShowOwner.formName)">
+				<DataAnnotationsValidator/>
+				<ValidationSummary/>
+				<h2>Update owner</h2>
+				<div>
+					<label for="given-name">Given name : </label>
+					<InputText placeholder="@(Owner.GivenName)" id="given-name" @bind-Value="@(UpdateModel.GivenName)"/>
+				</div>
+				<ValidationMessage For="@(() => UpdateModel.GivenName)"/>
+
+				<div>
+					<label for="family-name">Family name : </label>
+					<InputText placeholder="@(Owner.FamilyName)" id="family-name"
+					           @bind-Value="@(UpdateModel.FamilyName)"/>
+				</div>
+				<ValidationMessage For="@(() => UpdateModel.FamilyName)"/>
+
+				<div>
+					<label for="birth-date">Date of birth : </label>
+					<InputDate placeholder="@(Owner.BirthDate.ToString() ?? string.Empty)" id="birth-date"
+					           @bind-Value="@(UpdateModel.BirthDate)"/>
+				</div>
+				<ValidationMessage For="@(() => UpdateModel.BirthDate)"/>
+
+				<div>
+					<label for="sex">Sex : </label>
+					<InputSelect placeholder="@(Owner.Sex.ToSexHuman())" id="sex" required
+					             @bind-Value="@(UpdateModel.Sex)">
+						@foreach (var value in Enum.GetValues<HumanSex>().Where(static (value) => value > HumanSex.None))
+						{
+							var key = $"sex-{value}";
+							<option @key="@(key)" value="@(value.ToSexHuman())">@(value.ToSexHuman())</option>
+						}
+					</InputSelect>
+				</div>
+				<ValidationMessage For="@(() => UpdateModel.Sex)"/>
+
+				<div>
+					<label for="email">Email : </label>
+					<InputText placeholder="@(Owner.Email)" id="email" @bind-Value="@(UpdateModel.Email)"/>
+				</div>
+				<ValidationMessage For="@(() => UpdateModel.Email)"/>
+
+				<div>
+					<label for="phone">Phone : </label>
+					<InputText placeholder="@(Owner.Phone ?? string.Empty)" id="phone"
+					           @bind-Value="@(UpdateModel.Phone)"/>
+				</div>
+				<ValidationMessage For="@(() => UpdateModel.Phone)"/>
+
+				<button type="submit">submit</button>
+			</EditForm>
+		</div>
+	</div>
+}

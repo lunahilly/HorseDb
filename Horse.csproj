@@ -1,0 +1,70 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+	<PropertyGroup>
+		<TargetFramework>net10.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<BlazorDisableThrowNavigationException>true</BlazorDisableThrowNavigationException>
+	  <UserSecretsId>7d82f9b7-d05c-4262-a712-e65d77ab5c5c</UserSecretsId>
+  </PropertyGroup>
+
+	<ItemGroup>
+	  <PackageReference Include="AntDesign" Version="1.4.3" />
+	  <PackageReference Include="Npgsql" Version="10.0.0-rc.1" />
+	  <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.0-rc.1" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Update="Components\Pages\Horses.razor.js">
+	    <DependentUpon>Horses.razor</DependentUpon>
+	  </None>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <AdditionalFiles Include="Web\Components\Appointments.razor" />
+	  <AdditionalFiles Include="Web\Layout\MainLayout.razor" />
+	  <AdditionalFiles Include="Web\Layout\NavMenu.razor" />
+	  <AdditionalFiles Include="Web\Layout\ReconnectModal.razor" />
+	  <AdditionalFiles Include="Web\Pages\Error.razor" />
+	  <AdditionalFiles Include="Web\Pages\Home.razor" />
+	  <AdditionalFiles Include="Web\Pages\Horses.razor" />
+	  <AdditionalFiles Include="Web\Pages\NotFound.razor" />
+	  <AdditionalFiles Include="Web\Pages\Owners.razor" />
+	  <AdditionalFiles Include="Web\Pages\ShowHorse.razor" />
+	  <AdditionalFiles Include="Web\Pages\ShowOwner.razor" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <_ContentIncludedByDefault Remove="web\Components\Layout\MainLayout.razor" />
+	  <_ContentIncludedByDefault Remove="web\Components\Layout\NavMenu.razor" />
+	  <_ContentIncludedByDefault Remove="web\Components\Layout\ReconnectModal.razor" />
+	  <_ContentIncludedByDefault Remove="web\Components\Pages\Error.razor" />
+	  <_ContentIncludedByDefault Remove="web\Components\Pages\Home.razor" />
+	  <_ContentIncludedByDefault Remove="web\Components\Pages\Horses.razor" />
+	  <_ContentIncludedByDefault Remove="web\Components\Pages\NotFound.razor" />
+	  <_ContentIncludedByDefault Remove="web\Components\Pages\Owners.razor" />
+	  <_ContentIncludedByDefault Remove="web\Components\Pages\ShowHorse.razor" />
+	  <_ContentIncludedByDefault Remove="web\Components\Pages\ShowOwner.razor" />
+	  <_ContentIncludedByDefault Remove="web\Layout\MainLayout.razor" />
+	  <_ContentIncludedByDefault Remove="web\Layout\NavMenu.razor" />
+	  <_ContentIncludedByDefault Remove="web\Layout\ReconnectModal.razor" />
+	  <_ContentIncludedByDefault Remove="web\Pages\Error.razor" />
+	  <_ContentIncludedByDefault Remove="web\Pages\Home.razor" />
+	  <_ContentIncludedByDefault Remove="web\Pages\Horses.razor" />
+	  <_ContentIncludedByDefault Remove="web\Pages\NotFound.razor" />
+	  <_ContentIncludedByDefault Remove="web\Pages\Owners.razor" />
+	  <_ContentIncludedByDefault Remove="web\Pages\ShowHorse.razor" />
+	  <_ContentIncludedByDefault Remove="web\Pages\ShowOwner.razor" />
+	  <_ContentIncludedByDefault Remove="New\Layout\MainLayout.razor" />
+	  <_ContentIncludedByDefault Remove="New\Layout\NavMenu.razor" />
+	  <_ContentIncludedByDefault Remove="New\Layout\ReconnectModal.razor" />
+	  <_ContentIncludedByDefault Remove="New\Pages\Error.razor" />
+	  <_ContentIncludedByDefault Remove="New\Pages\Home.razor" />
+	  <_ContentIncludedByDefault Remove="New\Pages\Horses.razor" />
+	  <_ContentIncludedByDefault Remove="New\Pages\NotFound.razor" />
+	  <_ContentIncludedByDefault Remove="New\Pages\Owners.razor" />
+	  <_ContentIncludedByDefault Remove="New\Pages\ShowHorse.razor" />
+	  <_ContentIncludedByDefault Remove="New\Pages\ShowOwner.razor" />
+	</ItemGroup>
+
+</Project>

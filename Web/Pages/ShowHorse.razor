@@ -1,0 +1,212 @@
+@page "/horses/{Id:int}"
+@using Horse.Models.Enums
+@using Horse.Web.Icons
+@layout MainLayout
+@rendermode InteractiveServer
+@if (horsie is not null)
+{
+	<!--suppress HtmlDeprecatedAttribute -->
+	<div class="ShowTitle">
+		<h1 style="margin-block-end: 0.5em">@(horsie.Name)</h1>
+		<button class="showButtons" @onclick="@(ToggleHidden)"
+				type="button">
+			<Edit/>
+		</button>
+	</div>
+	<div class="Top">
+		<div>
+			<ul class="List">
+				<li>
+					<h2>Full name</h2>
+					<p>@(horsie.FullName)</p>
+				</li>
+				<li>
+					<h2>Chip</h2>
+					<p>@(horsie.Chip)</p>
+				</li>
+				<li>
+					<h2>Owner</h2>
+					@if (horsie.Owner != null)
+					{
+						<p>
+							<a href="/owners/@(horsie.Owner.Id.ToString())">
+								@(horsie.Owner.GivenName) @(horsie.Owner.FamilyName)
+							</a>
+						</p>
+					}
+					else
+					{
+						<p>-</p>
+					}
+				</li>
+				<li>
+					<h2>Race</h2>
+					@if (horsie.Race != null)
+					{
+						<p>@(horsie.Race.Name)</p>
+					}
+					else
+					{
+						<p>-</p>
+					}
+				</li>
+				<li>
+					<h2>Birthdate</h2>
+					@if (horsie.BirthDate != null)
+					{
+						<p>@(horsie.BirthDate.ToString() ?? string.Empty)</p>
+					}
+					else
+					{
+						<p>-</p>
+					}
+				</li>
+				<li>
+					<h2>Sex</h2>
+					<p>@(horsie.Sex.ToSexHorse())</p>
+				</li>
+			</ul>
+			<ul class="List">
+				<li>
+					<h2>Height</h2>
+					<p>@(horsie.Height.ToString() ?? string.Empty)cm</p>
+				</li>
+				@* <li><h2>Height</h2><p>@(Horsie.HorseImage?.ImageUrl ?? "No url")</p></li> *@
+				<li>
+					<h2>Weight</h2>
+					<p>@(horsie.Weight.ToString() ?? string.Empty)kg</p>
+				</li>
+				<li>
+					<h2>Weight state</h2>
+					<p>@(horsie.WeightState.ToWeightState())</p>
+				</li>
+				<li>
+					<h2>State</h2>
+					<p>@(horsie.State.ToState())</p>
+				</li>
+			</ul>
+			<Comments Id="@(Id)"/>
+			<Appointments HorseId="@(Id)"/>
+		</div>
+		<div hidden="@(hidden)" class="Form">
+			<EditForm Model="@(UpdateModel)" OnValidSubmit="@(UpdateHorse)" FormName="@(ShowHorse.formName)">
+				<DataAnnotationsValidator/>
+				<ValidationSummary/>
+				<h2>Update horse</h2>
+				<div>
+					<label for="race">Race : </label>
+					<InputSelect required id="race" @bind-Value="@(UpdateModel.RaceId)">
+						<option disabled/>
+						@foreach (var value in races)
+						{
+							var key = $"race-update-{value.Id}";
+							<option @key="@(key)" value="@(value.Id.ToString())">@(value.Name)</option>
+						}
+					</InputSelect>
+				</div>
+				<ValidationMessage For="@(() => UpdateModel.RaceId)"/>
+
+				<div>
+					<label for="owner">Owner : </label>
+					<InputSelect required id="owner" @bind-Value="@(UpdateModel.OwnerId)">
+						<option disabled/>
+						@foreach (var value in owners)
+						{
+							var key = $"owner-update-{value.Id}";
+							<option @key="@(key)"
+							        value="@(value.Id.ToString())">@(value.GivenName) @(value.FamilyName)</option>
+						}
+					</InputSelect>
+				</div>
+				<ValidationMessage For="@(() => UpdateModel.OwnerId)"/>
+
+				<div>
+					<label for="name">Name : </label>
+					<InputText placeholder="@(horsie.Name)" id="name" @bind-Value="@(UpdateModel.Name)"/>
+				</div>
+				<ValidationMessage For="@(() => UpdateModel.Name)"/>
+
+				<div>
+					<label for="fullname">Full name : </label>
+					<InputText placeholder="@(horsie.FullName)" id="fullname"
+					           @bind-value="@(UpdateModel.FullName)"/>
+				</div>
+				<ValidationMessage For="@(() => UpdateModel.FullName)"/>
+
+				<div>
+					<label for="chip">Chip : </label>
+					<InputText placeholder="@(horsie.Chip)" maxlength="15" id="chip"
+					           @bind-Value="@(UpdateModel.Chip)"/>
+				</div>
+				<ValidationMessage For="@(() => UpdateModel.Chip)"/>
+
+				<div>
+					<label for="sex">Sex : </label>
+					<InputSelect placeholder="@(horsie.Sex.ToSexHorse())" id="sex" @bind-Value="@(UpdateModel.Sex)">
+						@foreach (var value in Enum.GetValues<HorseSex>().Where(static (value) => value > HorseSex.None))
+						{
+							var key = $"horse-sex-{value}";
+							<option @key="@(key)" value="@(value.ToSexHorse())">@(value.ToSexHorse())</option>
+						}
+					</InputSelect>
+				</div>
+				<ValidationMessage For="@(() => UpdateModel.Sex)"/>
+
+				<div>
+					<label for="birth-date">Date of birth : </label>
+					<InputDate placeholder="@(horsie.BirthDate.ToString() ?? string.Empty)" id="birth-date"
+					           @bind-Value="@(UpdateModel.BirthDate)"/>
+				</div>
+				<ValidationMessage For="@(() => UpdateModel.BirthDate)"/>
+
+				<div>
+					<label for="color">Color : </label>
+					<InputText placeholder="@(horsie.Color ?? string.Empty)" id="color"
+					           @bind-Value="@(UpdateModel.Color)"/>
+				</div>
+				<ValidationMessage For="@(() => UpdateModel.Color)"/>
+
+				<div>
+					<label for="weight">Weight : </label>
+					<InputNumber placeholder="@(horsie.Weight.ToString() ?? string.Empty)" id="weight"
+					             @bind-Value="@(UpdateModel.Weight)"/>
+				</div>
+				<ValidationMessage For="@(() => UpdateModel.Weight)"/>
+
+				<div>
+					<label for="height">Height : </label>
+					<InputNumber placeholder="@(horsie.Height.ToString() ?? string.Empty)" id="height"
+					             @bind-Value="@(UpdateModel.Height)"/>
+				</div>
+				<ValidationMessage For="@(() => UpdateModel.Height)"/>
+
+				<div>
+					<label for="weight-state">Weight state : </label>
+					<InputSelect placeholder="@(horsie.WeightState.ToWeightState())" id="weight-state"
+					             @bind-Value="@(UpdateModel.WeightState)">
+						@foreach (var value in Enum.GetValues<HorseWeightState>().Where(static (value) => value > HorseWeightState.None))
+						{
+							var key = $"weight-{value}";
+							<option @key="@(key)" value="@(value.ToWeightState())">@(value.ToWeightState())</option>
+						}
+					</InputSelect>
+				</div>
+				<ValidationMessage placeholder="@(horsie.State.ToState())" For="@(() => UpdateModel.WeightState)"/>
+
+				<div>
+					<label for="state">State : </label>
+					<InputSelect id="state" @bind-Value="@(UpdateModel.State)">
+						@foreach (var value in Enum.GetValues<State>().Where(static (value) => value > State.None))
+						{
+							var key = $"state-{value}";
+							<option @key="@(key)" value="@(value.ToState())">@(value.ToState())</option>
+						}
+					</InputSelect>
+				</div>
+				<ValidationMessage For="@(() => UpdateModel.State)"/>
+
+				<button type="submit">Add</button>
+			</EditForm>
+		</div>
+	</div>
+}

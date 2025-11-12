@@ -1,0 +1,95 @@
+@using Horse.Models.Enums
+@using Horse.Web.Icons
+<div class="Appointments">
+	<div class="Appointment">
+		<h2>
+			Upcoming appointments
+			<button class="showButtons" type="button"
+			        @onclick="@(ToggleUpcoming)">
+				<Check valueBool="@(hideUpcoming)"/>
+			</button>
+		</h2>
+		<div hidden="@(hideUpcoming)">
+			@foreach (var value in appointments.Where(static (a) => a.Date > DateTime.Now).OrderBy(static (e) => e.Date))
+			{
+				var key = $"upcoming-appointments-{value.Id}";
+				<div @key="key">
+					<p>[@(value.Date.ToAmsterdam().ToString("g"))]</p>
+					<h3>@(value.Horse?.Name ?? string.Empty)</h3>
+					<h4>@(value.Type.ToAppointmentType())</h4>
+					<p class="description">@(value.Description ?? string.Empty)</p>
+				</div>
+			}
+		</div>
+
+		<h2 style="margin-block-start: 4em">
+			Past appointments
+			<button class="showButtons" type="button"
+			        @onclick="@(TogglePast)">
+				<Check valueBool="@(hidePast)"/>
+			</button>
+		</h2>
+		<div hidden="@(hidePast)">
+			@foreach (var appointment in appointments.Where(static (a) => a.Date < DateTime.Now).OrderBy(static (e) => e.Date))
+			{
+				var key = $"past-appointments-{@appointment.Id}";
+				<div @key="key">
+					<p>[@(appointment.Date.ToAmsterdam().ToString("g"))]</p>
+					<h3>@(appointment.Horse?.Name ?? string.Empty)</h3>
+					<h4>@(appointment.Type.ToAppointmentType())</h4>
+					<p class="description">@(appointment.Description ?? string.Empty)</p>
+				</div>
+			}
+		</div>
+	</div>
+	<div class="AForm">
+		<EditForm Model="@(CreateAppointment)"
+		          OnValidSubmit="@(AddAppointment)" FormName="FormName">
+			<DataAnnotationsValidator/>
+			<ValidationSummary/>
+			<h2>Add appointment</h2>
+			@if (HorseId == 0)
+			{
+				<div>
+					<label for="horse-id">Horse : </label>
+					<InputSelect required id="horse-id" @bind-Value="@(CreateAppointment.HorseId)">
+						@foreach (var value in horses)
+						{
+							var key = $"horses-apointments-{value.Id}";
+							<option @key="key" value="@(value.Id)">@(value.Name)</option>
+						}
+					</InputSelect>
+				</div>
+			}
+			else
+			{
+				<p hidden>@(CreateAppointment.HorseId = HorseId)</p>
+				<InputNumber disabled hidden @bind-Value="@(CreateAppointment.HorseId)"/>
+			}
+			<div>
+				<label for="type">Type : </label>
+				<InputSelect required id="type" @bind-Value="@(CreateAppointment.Type)">
+					@foreach (var value in Enum.GetValues(typeof(AppointmentType)).OfType<AppointmentType>())
+					{
+						var key = $"horse-sex-{value}";
+						<option @key="key" value="@(value.ToAppointmentType())">@(value.ToAppointmentType())</option>
+					}
+				</InputSelect>
+				<ValidationMessage For="@(() => CreateAppointment.Type)"/>
+			</div>
+			<div>
+				<label for="date">Date : </label>
+				<InputDate Type="InputDateType.DateTimeLocal" required id="date"
+				           @bind-Value="@(CreateAppointment.Date)"/>
+				<ValidationMessage For="@(() => CreateAppointment.Date)"/>
+			</div>
+			<div>
+				<label for="description">Description : </label>
+				<InputTextArea id="description"
+				               @bind-Value="@(CreateAppointment.Description)"/>
+				<ValidationMessage For="@(() => CreateAppointment.Description)"/>
+			</div>
+			<button type="submit">Add</button>
+		</EditForm>
+	</div>
+</div>

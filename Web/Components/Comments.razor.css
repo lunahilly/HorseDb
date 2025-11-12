@@ -1,0 +1,10 @@
+.HorseComments {
+	border: 1px solid #d6d5d5;
+	padding: 1em;
+	max-width: 40vw;
+	min-height: 16em;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	margin-block-end: 1em;
+}

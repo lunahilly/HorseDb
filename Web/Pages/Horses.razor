@@ -1,0 +1,205 @@
+@page "/horses"
+@using Horse.Models.Enums
+@using Horse.Web.Icons
+@layout MainLayout
+@rendermode InteractiveServer
+
+<PageTitle>Horses</PageTitle>
+<h1 style="font-size: 1.25em; font-weight: normal">All horses:</h1>
+<table class="table">
+	<thead>
+	<tr>
+		<th>Id</th>
+		<th>Name</th>
+		<th>Full Name</th>
+		<th>Owner</th>
+		<th>Sex</th>
+		<th>Race</th>
+		<th>Weight state</th>
+		<th>State</th>
+		<th>
+			<button style="border: none; background: none;" type="button" @onclick="@(ToggleHidden)">
+				<Add/>
+			</button>
+		</th>
+	</tr>
+	</thead>
+	<tbody>
+	@foreach (var hors in horse)
+	{
+		var key = $"horseskey-{hors.Id}";
+		<tr @key="key">
+			<td>
+				<a href="/horses/@(hors.Id.ToString())">
+					@(hors.Id.ToString())
+				</a>
+			</td>
+			<td>
+				<a href="/horses/@(hors.Id.ToString())">
+					@(hors.Name)
+				</a>
+			</td>
+			<td>
+				<a href="/horses/@(hors.Id.ToString())">
+					@(hors.FullName)
+				</a>
+			</td>
+			<td>
+				<a href="/owners/@hors.Owner!.Id.ToString()">
+					@(hors.Owner.GivenName)
+				</a>
+			</td>
+			<td>
+				@(hors.Sex.ToSexHorse())
+			</td>
+			<td>
+				@(hors.Race.Name)
+			</td>
+			<td>
+				@(hors.WeightState.ToWeightState())
+			</td>
+			<td>
+				@(hors.State.ToState())
+			</td>
+			<td>
+				<button style="border: none; background: none;" type="button" @onclick="@(() => ShowDialog(hors.Name, hors.Id, "DialogHorses"))">
+					<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+					     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+					     class="icon icon-tabler icons-tabler-outline icon-tabler-trash">
+						<path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+						<path d="M4 7l16 0"/>
+						<path d="M10 11l0 6"/>
+						<path d="M14 11l0 6"/>
+						<path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"/>
+						<path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3"/>
+					</svg>
+				</button>
+			</td>
+		</tr>
+	}
+	<dialog id="DialogHorses">
+		<h2 id="dialogtext" style="font-size: 1.5em; margin-block-end: 2em"></h2>
+		<div style="display: flex; gap: 2em; justify-content: space-evenly">
+			<button style="font-size: 1.25em" type="button" @onclick="@(() => DeleteHorsie(delete))">Yes
+			</button>
+			<button style="font-size: 1.25em" type="button" @onclick="@(() => CloseDialog("DialogHorses"))">No</button>
+		</div>
+	</dialog>
+	</tbody>
+</table>
+
+<div hidden="@(hidden)" class="Form">
+	<EditForm Model="@(CreateModel)" OnValidSubmit="@(AddHorsie)" FormName="@(Horses.formName)">
+		<DataAnnotationsValidator/>
+		<ValidationSummary/>
+		<h2>Add horse</h2>
+		<div>
+			<label for="race">Race : </label>
+			<InputText id="race" list="Races" @bind-Value="@raceid"/>
+			<datalist id="Races">
+				@foreach (var value in race)
+				{
+					var key = $"race-{value.Id}";
+					<option @key="@(key)" value="@(value.Id.ToString())">@(value.Name)</option>
+				}
+			</datalist>
+		</div>
+		<ValidationMessage For="@(() => CreateModel.RaceId)"/>
+
+		<div>
+			<label for="owner">Owner : </label>
+			<InputSelect id="owner" required @bind-Value="@(CreateModel.OwnerId)">
+				<option disabled/>
+				@foreach (var value in owner)
+				{
+					var key = $"owner-{value.Id}";
+					<option @key="@(key)" value="@(value.Id.ToString())">@(value.GivenName) @(value.FamilyName)</option>
+				}
+			</InputSelect>
+		</div>
+		<ValidationMessage For="@(() => CreateModel.OwnerId)"/>
+
+		<div>
+			<label for="name">Name : </label>
+			<InputText id="name" required @bind-Value="@(CreateModel.Name)"/>
+		</div>
+		<ValidationMessage For="@(() => CreateModel.Name)"/>
+
+		<div>
+			<label for="fullname">Full name : </label>
+			<InputText id="fullname" required @bind-value="@(CreateModel.FullName)"/>
+		</div>
+		<ValidationMessage For="@(() => CreateModel.FullName)"/>
+
+		<div>
+			<label for="chip">Chip : </label>
+			<InputText minlenght="15" maxlength="15" id="chip" required @bind-Value="@(CreateModel.Chip)"/>
+		</div>
+		<ValidationMessage For="@(() => CreateModel.Chip)"/>
+
+		<div>
+			<label for="sex">Sex : </label>
+			<InputSelect id="sex" required @bind-Value="@(CreateModel.Sex)">
+				<option disabled/>
+				@foreach (var value in Enum.GetValues<HorseSex>().Where(static (value) => value > HorseSex.None))
+				{
+					var key = $"horse-sex-{value}";
+					<option @key="@(key)" value="@(value.ToSexHorse())">@(value.ToSexHorse())</option>
+				}
+			</InputSelect>
+		</div>
+		<ValidationMessage For="@(() => CreateModel.Sex)"/>
+
+		<div>
+			<label for="birth-date">Date of birth : </label>
+			<InputDate id="birth-date" @bind-Value="@(CreateModel.Birthdate)"/>
+		</div>
+		<ValidationMessage For="@(() => CreateModel.Birthdate)"/>
+
+		<div>
+			<label for="color">Color : </label>
+			<InputText id="color" @bind-Value="@(CreateModel.Color)"/>
+		</div>
+		<ValidationMessage For="@(() => CreateModel.Color)"/>
+
+		<div>
+			<label for="weight">Weight : </label>
+			<InputNumber id="weight" @bind-Value="@(CreateModel.Weight)"/>
+		</div>
+		<ValidationMessage For="@(() => CreateModel.Weight)"/>
+
+		<div>
+			<label for="height">Height : </label>
+			<InputNumber id="height" @bind-Value="@(CreateModel.Height)"/>
+		</div>
+		<ValidationMessage For="@(() => CreateModel.Height)"/>
+
+		<div>
+			<label for="weight-state">Weight state : </label>
+			<InputSelect id="weight-state" @bind-Value="@(CreateModel.WeightState)">
+				<option disabled/>
+				@foreach (var value in Enum.GetValues<HorseWeightState>().Where(static (value) => value > HorseWeightState.None))
+				{
+					var key = $"weight-{value}";
+					<option @key="@(key)" value="@(value.ToWeightState())">@(value.ToWeightState())</option>
+				}
+			</InputSelect>
+		</div>
+		<ValidationMessage For="@(() => CreateModel.WeightState)"/>
+
+		<div>
+			<label for="state">State : </label>
+			<InputSelect required id="state" @bind-Value="@(CreateModel.State)">
+				<option disabled/>
+				@foreach (var value in Enum.GetValues<State>().Where(static (value) => value > State.None))
+				{
+					var key = $"state-{value}";
+					<option @key="@(key)" value="@(value.ToState())">@(value.ToState())</option>
+				}
+			</InputSelect>
+		</div>
+		<ValidationMessage For="@(() => CreateModel.State)"/>
+
+		<button type="submit">Add</button>
+	</EditForm>
+</div>

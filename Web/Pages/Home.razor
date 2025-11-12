@@ -1,0 +1,32 @@
+﻿@page "/"
+@layout MainLayout
+@rendermode InteractiveServer
+
+<PageTitle>Home</PageTitle>
+
+<div class="statistics">
+	<h1 style="font-size: 1.25em;">Statistics</h1>
+	<div>
+		<h2>Total amount of horses : </h2>
+		<p>@(totalHorses.ToString())</p>
+	</div>
+	<div>
+		<h2>Average weight : </h2>
+		<p>@(averageWeight.ToString() ?? string.Empty) kg</p>
+	</div>
+	<div>
+		<h2>Total weight : </h2>
+		<p>@(totalWeight.ToString() ?? string.Empty) kg</p>
+	</div>
+	<div>
+		<h2>Average age : </h2>
+		<p>@(averageAge.ToString())</p>
+	</div>
+	<div>
+		<h2>Average amount of horses per owner: </h2>
+		<p>@(horsesOwner.ToString("0.0"))</p>
+	</div>
+</div>
+
+
+<Appointments/>
