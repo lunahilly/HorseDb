@@ -45,7 +45,7 @@
 				</a>
 			</td>
 			<td>
-				<a href="/owners/@hors.Owner!.Id.ToString()">
+				<a href="/owners/@hors.Owner.Id.ToString()">
 					@(hors.Owner.GivenName)
 				</a>
 			</td>
@@ -78,7 +78,7 @@
 		</tr>
 	}
 	<dialog id="DialogHorses">
-		<h2 id="dialogtext" style="font-size: 1.5em; margin-block-end: 2em"></h2>
+		<h2 id="DialogText" style="font-size: 1.5em; margin-block-end: 2em"></h2>
 		<div style="display: flex; gap: 2em; justify-content: space-evenly">
 			<button style="font-size: 1.25em" type="button" @onclick="@(() => DeleteHorsie(delete))">Yes
 			</button>
