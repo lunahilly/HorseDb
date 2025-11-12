@@ -38,6 +38,10 @@
 				<a href="/owners/@(owner.Id.ToString())">
 					@(owner.GivenName) @(owner.FamilyName)
 				</a>
+				@if (BirthdayToday(owner))
+				{
+					<Birthday/>
+				}
 			</td>
 			<td>
 				@(owner.Sex.ToSexHuman())
@@ -57,16 +61,7 @@
 			</td>
 			<td>
 				<ul>
-					@if (owner.Horses != null)
-						@foreach (var horse in owner.Horses)
-					{
-						var key2 = $"horse-in-owner-key-{horse.Name}";
-						<li @key="key2">
-							<a href="/horses/@(horse.Id.ToString())">
-								@(horse.Name)
-							</a>
-						</li>
-					}
+					@(owner.Horses?.Count)
 				</ul>
 			</td>
 			<td>

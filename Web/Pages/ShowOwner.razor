@@ -19,7 +19,13 @@
 			<ul class="List">
 				<li>
 					<h2>Name</h2>
-					<p>@(Owner.GivenName) @(Owner.FamilyName)</p>
+					<p>
+						@(Owner.GivenName) @(Owner.FamilyName)
+						@if (BirthdayToday())
+						{
+							<Birthday/>
+						}
+					</p>
 				</li>
 				<li>
 					<h2>Birthdate</h2>
@@ -78,7 +84,7 @@
 				}
 			</ul>
 		</div>
-		<div hidden="@(hidden.ToString())" class="Form">
+		<div hidden="@(hidden)" class="Form">
 			<EditForm Model="@(UpdateModel)" OnValidSubmit="@(UpdateOwner)" FormName="@(ShowOwner.formName)">
 				<DataAnnotationsValidator/>
 				<ValidationSummary/>

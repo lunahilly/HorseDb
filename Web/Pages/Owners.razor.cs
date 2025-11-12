@@ -101,6 +101,15 @@ namespace Horse.Web.Pages
 			}
 		}
 
+		private bool BirthdayToday(Owner owner)
+		{
+			if (owner.BirthDate != null && owner.BirthDate.Value.DayOfYear == DateTime.Today.DayOfYear)
+			{
+				return true;
+			}
+			return false;
+		}
+
 		private void ToggleHidden() => this.hidden = !this.hidden;
 	}
 }
